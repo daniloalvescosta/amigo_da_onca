@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Amigo da Onça</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Arial', sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+    }
+
+    .container {
+      background: white;
+      border-radius: 20px;
+      padding: 40px;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+      max-width: 500px;
+      width: 100%;
+      text-align: center;
+    }
+
+    h1 {
+      color: #764ba2;
+      margin-bottom: 10px;
+      font-size: 2.5em;
+    }
+
+    .subtitle {
+      color: #666;
+      margin-bottom: 30px;
+      font-size: 1.1em;
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 8px;
+      color: #333;
+      font-weight: bold;
+      font-size: 1.1em;
+    }
+
+    input[type="text"] {
+      width: 100%;
+      padding: 12px;
+      border: 2px solid #ddd;
+      border-radius: 8px;
+      font-size: 1em;
+      transition: border-color 0.3s;
+    }
+
+    input[type="text"]:focus {
+      outline: none;
+      border-color: #667eea;
+    }
+
+    button {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      border: none;
+      padding: 15px 40px;
+      border-radius: 8px;
+      font-size: 1.2em;
+      font-weight: bold;
+      cursor: pointer;
+      transition: transform 0.2s, box-shadow 0.2s;
+      width: 100%;
+    }
+
+    button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
+    }
+
+    button:active {
+      transform: translateY(0);
+    }
+
+    button:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
+    /* Cubo 3D */
+    .scene {
+      width: 200px;
+      height: 200px;
+      margin: 40px auto;
+      perspective: 600px;
+    }
+
+    .cube {
+      width: 100%;
+      height: 100%;
+      position: relative;
+      transform-style: preserve-3d;
+      animation: rotate 2s infinite linear;
+    }
+
+    @keyframes rotate {
+      from {
+        transform: rotateX(0deg) rotateY(0deg);
+      }
+      to {
+        transform: rotateX(360deg) rotateY(360deg);
+      }
+    }
+
+    .cube__face {
+      position: absolute;
+      width: 200px;
+      height: 200px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      border: 2px solid #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 100px;
+      color: white;
+      opacity: 0.9;
+    }
+
+    .cube__face--front  { transform: rotateY(  0deg) translateZ(100px); }
+    .cube__face--right  { transform: rotateY( 90deg) translateZ(100px); }
+    .cube__face--back   { transform: rotateY(180deg) translateZ(100px); }
+    .cube__face--left   { transform: rotateY(-90deg) translateZ(100px); }
+    .cube__face--top    { transform: rotateX( 90deg) translateZ(100px); }
+    .cube__face--bottom { transform: rotateX(-90deg) translateZ(100px); }
+
+    .result {
+      margin-top: 30px;
+    }
+
+    .result h2 {
+      color: #667eea;
+      margin-bottom: 15px;
+      font-size: 1.5em;
+    }
+
+    .drawn-name {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      padding: 20px;
+      border-radius: 12px;
+      font-size: 2em;
+      font-weight: bold;
+      animation: fadeIn 0.5s ease-in;
+    }
+
+    .gift-suggestion {
+      background: #f0f0f0;
+      color: #333;
+      padding: 15px;
+      border-radius: 8px;
+      margin-top: 15px;
+      font-size: 1em;
+      font-style: italic;
+      animation: fadeIn 0.5s ease-in 0.3s backwards;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: scale(0.8);
+      }
+      to {
+        opacity: 1;
+        transform: scale(1);
+      }
+    }
+
+    .error {
+      background: #ff4444;
+      color: white;
+      padding: 15px;
+      border-radius: 8px;
+      margin-top: 15px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>🐆 Amigo da Onça</h1>
+    <p class="subtitle">Descubra seu amigo secreto!</p>
+
+    <div id="formContainer">
+      <div class="form-group">
+        <label for="userName">Digite seu nome:</label>
+        <input type="text" id="userName" placeholder="Seu nome aqui..." autocomplete="off">
+      </div>
+      <button id="drawButton">Sortear</button>
+    </div>
+
+    <div id="loadingContainer" class="hidden">
+      <div class="scene">
+        <div class="cube">
+          <div class="cube__face cube__face--front">?</div>
+          <div class="cube__face cube__face--back">?</div>
+          <div class="cube__face cube__face--right">?</div>
+          <div class="cube__face cube__face--left">?</div>
+          <div class="cube__face cube__face--top">?</div>
+          <div class="cube__face cube__face--bottom">?</div>
+        </div>
+      </div>
+    </div>
+
+    <div id="resultContainer" class="hidden">
+      <div class="result">
+        <h2>Seu amigo secreto é:</h2>
+        <div class="drawn-name" id="drawnName"></div>
+        <div class="gift-suggestion" id="giftSuggestion"></div>
+      </div>
+    </div>
+
+    <div id="errorContainer" class="hidden">
+      <div class="error" id="errorMessage"></div>
+    </div>
+  </div>
+
+  <script>
+    document.getElementById('drawButton').addEventListener('click', function() {
+      const userName = document.getElementById('userName').value.trim();
+
+      if (!userName) {
+        showError('Por favor, digite seu nome!');
+        return;
+      }
+
+      // Oculta o formulário
+      document.getElementById('formContainer').classList.add('hidden');
+      document.getElementById('errorContainer').classList.add('hidden');
+
+      // Mostra o cubo girando
+      document.getElementById('loadingContainer').classList.remove('hidden');
+
+      // Após 4 segundos, faz a requisição
+      setTimeout(() => {
+        fetch('/draws/create', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ user_name: userName })
+        })
+        .then(response => response.json())
+        .then(data => {
+          // Oculta o cubo
+          document.getElementById('loadingContainer').classList.add('hidden');
+
+          if (data.error) {
+            showError(data.error);
+            document.getElementById('formContainer').classList.remove('hidden');
+          } else {
+            // Mostra o resultado
+            document.getElementById('drawnName').textContent = data.drawn_name;
+            document.getElementById('giftSuggestion').textContent = data.gift_suggestion;
+            document.getElementById('resultContainer').classList.remove('hidden');
+          }
+        })
+        .catch(error => {
+          document.getElementById('loadingContainer').classList.add('hidden');
+          showError('Erro ao realizar sorteio. Tente novamente.');
+          document.getElementById('formContainer').classList.remove('hidden');
+        });
+      }, 4000);
+    });
+
+    function showError(message) {
+      document.getElementById('errorMessage').textContent = message;
+      document.getElementById('errorContainer').classList.remove('hidden');
+    }
+
+    // Permite enviar com Enter
+    document.getElementById('userName').addEventListener('keypress', function(e) {
+      if (e.key === 'Enter') {
+        document.getElementById('drawButton').click();
+      }
+    });
+  </script>
+</body>
+</html>
