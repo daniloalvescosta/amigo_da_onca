@@ -71,6 +71,4 @@ test:
 #
 production:
   <<: *default
-  database: amigo_da_onca_production
-  username: amigo_da_onca
-  password: <%= ENV["AMIGO_DA_ONCA_DATABASE_PASSWORD"] %>
+  url: <%= ENV['DATABASE_URL'] %>
